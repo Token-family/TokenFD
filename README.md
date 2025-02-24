@@ -27,9 +27,10 @@ we seamlessly replace previous VFMs with TokenOCR to construct a document-level 
 
 In summary:
 (1) The first token-level image text dataset (TokenIT ) is proposed, which consists of 20 million images and 1.8 billion high-quality token-mask pairs.
+
 (2) The first token-level text image foundation model, TokenOCR, is proposed to support downstream tasks.
+
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
-(4) Extensive experiments demonstrate the effectiveness of our proposed TokenOCR and TokenVL. Specifically, TokenOCR shows exceptional "zero-shot" capabilities and flexibility compared to other VFMs, such as CLIP, SAM, and InternViT2.5. TokenVL with 8B parameters, incorporating TokenOCR as the VFM, achieves performance gains of 38 on OCRBench and an average of 8.8% across ten VQA tasks. Similarly, TokenVL with 2B parameters results in performance gains of 17 on OCRBench and an average of 13.34% on the ten VQA tasks.
 <center>
 
 <!-- # Setup -->
