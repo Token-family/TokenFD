@@ -115,14 +115,19 @@ generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings,
 ```
 
 <h2 style="color: #4CAF50;">Gradio Demo</h2>
+
+<center>
 To run gradio demo, simply run:
+
 ```
 streamlit run gtk.py --server.port 8420
 ```
+
 Then a simple Web-UI to interactive:
 <div align="center">
-  <img width="500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
+  <img width="1500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
 </div>
+</center>
 
 <!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
