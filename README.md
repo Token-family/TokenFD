@@ -37,7 +37,7 @@ conda create -n tokenocr python=3.9
 conda activate tokenocr
 pip install -r requirements.txt
 ```
-Install flash-attn==2.3.6 (optional, for training chat models):
+Install flash-attn==2.3.6 (optional):
 ```
 pip install flash-attn==2.3.6 --no-build-isolation
 ```
@@ -48,6 +48,7 @@ cd flash-attention
 git checkout v2.3.6
 python setup.py install
 ```
+If you don't use flash-attn, please modify the configs of [weights](https://huggingface.co/TongkunGuan/TokenOCR/tree/main), referring to [this](https://github.com/OpenGVLab/InternVL/issues/163#issuecomment-2114083407)
 
 <center>
   
