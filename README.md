@@ -18,10 +18,8 @@
 - [Installation](#%EF%B8%8F-Installation)
 - [Quick Start](#-quick-Start)
 - [Gradio Demo](#-gradio-Demo)
-- [Token Family](#-Token-family)
+- [Token Family](#-token-family)
 - [Release Plans](#-Release-Plans)
-- [License](#-License)
-- [Citation](#-citation)
 
   
 # 📝 Introduction
