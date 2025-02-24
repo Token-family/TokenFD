@@ -86,8 +86,9 @@ The comparisons with other visual foundation models:
 | **TokenOCR**           | **token-level** | **TokenIT**  | **20M**    | **1.8B**   |
 
 </details>
-<!-- ## TokenOCR
- -->
+
+
+<details><summary>TokenOCR</summary>
 <h2 style="color: #4CAF50;">TokenOCR</h2>
 
 ### Model Architecture
@@ -203,8 +204,9 @@ Please refer to our technical report for more details.
 
 <!-- ![image/png](https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/IbLZ0CxCxDkTaHAMe7M0Q.png)
  -->
+</details>
 
-<!-- ## TokenVL -->
+<details><summary>TokenVL</summary>
 <h2 style="color: #4CAF50;">TokenVL </h2>
 
 we employ the TokenOCR as the visual foundation model and further develop an MLLM, named TokenVL, tailored for document understanding. 
@@ -237,6 +239,7 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 <div align="center">
   <img width="1300" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/Msfs1YkDQHq2-djhm6QqD.png">
 </div>
+</details>
 
 
 
