@@ -28,11 +28,23 @@ we seamlessly replace previous VFMs with TokenOCR to construct a document-level 
 <center>
 
 <!-- # Setup -->
-<h2 style="color: #4CAF50;">Setup</h2>
+<h2 style="color: #4CAF50;">Installation</h2>
 
 </center>
 
 ```
+conda create -n tokenocr python=3.9
+conda activate tokenocr
+pip install -r requirements.txt
+Install flash-attn==2.3.6 (optional, for training chat models):
+
+pip install flash-attn==2.3.6 --no-build-isolation
+Alternatively you can compile from source:
+
+git clone https://github.com/Dao-AILab/flash-attention.git
+cd flash-attention
+git checkout v2.3.6
+python setup.py install
 ```
 
 <center>
