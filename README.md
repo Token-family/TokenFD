@@ -114,13 +114,21 @@ attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_siz
 generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
 ```
 
-<h2 style="color: #4CAF50;">Deploy the demo locally</h2>
-
+<h2 style="color: #4CAF50;">Gradio Demo</h2>
+To run gradio demo, simply run:
+```
+streamlit run gtk.py --server.port 8420
+```
+Then a simple Web-UI to interactive:
+<div align="center">
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
+</div>
 
 <!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
 
 </center>
+
 
 <details><summary>TokenIT</summary>
 <h2 style="color: #4CAF50;">TokenIT</h2>
