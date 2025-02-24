@@ -264,7 +264,15 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 </div>
 </details>
 
+## Release Plans
 
+- [✅] Inference code and weights for TokenOCR
+- [x] TokenIT data and script
+- [x] Data for the Pre-training and Fine-tuning of TokenVL
+- [x] Code & model checkpoint for TokenVL
+- [x] Other code and resources
+- [x] Code for pre-training and evaluation on ScreenSpot
+- [x] Code for collecting pre-training data
 
 ## License
 
