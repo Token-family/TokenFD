@@ -1,12 +1,9 @@
-# TokenOCR
-A Token-level Text Image Foundation Model for Document Understanding
-
 <center>
 
 <h1 style="color: black;">A Token-level Text Image Foundation Model for Document Understanding</h1>
 
 
-[\[📂 GitHub\]](https://github.com/Token-family/TokenOCR)    [\[📖 Paper\]]() [\[🆕 Blog\]]()    [\[🤗 HF Demo\]](https://huggingface.co/spaces/OpenGVLab/InternVL)    [\[🚀 Quick Start\]](#quick-start)  
+[\[📂 GitHub\]](https://github.com/Token-family/TokenOCR)    [\[📖 Paper\]]() [\[🆕 Blog\]]()   [\[🤗 HF\]](https://huggingface.co/TongkunGuan/TokenOCR) [\[🤗 Demo\]](https://huggingface.co/spaces/OpenGVLab/InternVL) [\[🚀 Quick Start\]](#quick-start)  
 
 </center>
 
