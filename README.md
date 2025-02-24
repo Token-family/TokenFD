@@ -12,8 +12,19 @@
 </div> -->
 
 <center>
+
+## 📖 Table of Contents
+- [Introduction](#-introduction)
+- [Installation](#-installation)
+- [Quick Start](#-quick-Start)
+- [Gradio Demo](#-gradio-Demo)
+- [Token Family](#-Token-family)
+- [Release Plans](#-Release-Plans)
+- [License](#-License)
+- [Citation](#-citation)
+
   
-<!-- # Introduction -->
+# 📝 Introduction
 <h2 style="color: #4CAF50;">Introduction</h2>
 
 </center>
@@ -34,7 +45,7 @@ In summary:
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
 <center>
 
-<!-- # Setup -->
+## 🛠️ Installation
 <h2 style="color: #4CAF50;">Installation</h2>
 
 </center>
@@ -59,7 +70,7 @@ If you don't use flash-attn, please modify the configs of [weights](https://hugg
 
 <center>
 
-### Quick Start
+## 🚀 Quick Start
 
 > \[!Warning\]
 > 🚨 Note: In our experience, the `TokenOCR-2048-Bilingual` series is better suited for building MLLMs than the `-seg` version.
@@ -113,7 +124,7 @@ attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_siz
 """generate map locally """
 generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
 ```
-
+## ✨ Gradio Demo
 <h2 style="color: #4CAF50;">Gradio Demo</h2>
 
 <center>
@@ -129,7 +140,7 @@ Then a simple Web-UI to interactive:
 </div>
 </center>
 
-<!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
+## 🏠 Token Family (TokenIT, TokenOCR, TokenVL)
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
 
 </center>
@@ -264,7 +275,7 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 </div>
 </details>
 
-## Release Plans
+## 🤚 Release Plans
 
 - [✅] Inference code and weights for TokenOCR
 - [x] TokenIT data and script
@@ -274,11 +285,11 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 - [x] Code for pre-training and evaluation on ScreenSpot
 - [x] Code for collecting pre-training data
 
-## License
+## 🏛 License
 
 This project is released under the MIT License.
 
-## Citation
+## 📎 Citation
 
 If you find this project useful in your research, please consider citing:
 
