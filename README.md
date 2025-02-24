@@ -27,7 +27,7 @@ we seamlessly replace previous VFMs with TokenOCR to construct a document-level 
 
 <center>
   
-<!-- # Token Family -->
+<!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family</h2>
 
 </center>
