@@ -114,7 +114,9 @@ attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_siz
 generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
 ```
 
-  
+<h2 style="color: #4CAF50;">Deploy the demo locally</h2>
+
+
 <!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
 
