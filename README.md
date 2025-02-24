@@ -57,8 +57,7 @@ If you don't use flash-attn, please modify the configs of [weights](https://hugg
 
 </center>
 
-<details>
-<!-- ## TokenIT -->
+<details><summary>TokenIT</summary>
 <h2 style="color: #4CAF50;">TokenIT</h2>
 
 In the following picture, we provide an overview of the self-constructed token-level **TokenIT** dataset, comprising 20 million images and 1.8 billion
