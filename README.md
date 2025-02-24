@@ -77,7 +77,7 @@ applications, including text segmentation, retrieval, and visual question answer
 
 ### Model Cards
 
-In the following table, we provide all models [🤗 link] of the TokenOCR series.
+In the following table, we provide all models [🤗 link](https://huggingface.co/TongkunGuan/TokenOCR/tree/main) of the TokenOCR series.
 
 |        Model Name         |                                Description                                |
 | :-----------------------: | :-------------------------------------------------------------------: |
