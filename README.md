@@ -26,6 +26,16 @@ Furthermore, leveraging this foundation with exceptional image-as-text capabilit
 we seamlessly replace previous VFMs with TokenOCR to construct a document-level MLLM, **`TokenVL`**, for VQA-based document understanding tasks. 
 
 <center>
+
+<!-- # Setup -->
+<h2 style="color: #4CAF50;">Setup</h2>
+
+</center>
+
+```
+```
+
+<center>
   
 <!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
