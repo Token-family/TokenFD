@@ -23,7 +23,6 @@
 
   
 # 📝 Introduction
-<h2 style="color: #4CAF50;">Introduction</h2>
 
 </center>
 
@@ -44,7 +43,6 @@ In summary:
 <center>
 
 ## 🛠️ Installation
-<h2 style="color: #4CAF50;">Installation</h2>
 
 </center>
 
@@ -123,7 +121,6 @@ attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_siz
 generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
 ```
 ## ✨ Gradio Demo
-<h2 style="color: #4CAF50;">Gradio Demo</h2>
 
 <center>
 To run gradio demo, simply run:
@@ -139,7 +136,6 @@ Then a simple Web-UI to interactive:
 </center>
 
 ## 🏠 Token Family (TokenIT, TokenOCR, TokenVL)
-<h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
 
 </center>
 
