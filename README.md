@@ -27,7 +27,7 @@ we seamlessly replace previous VFMs with TokenOCR to construct a document-level 
 
 In summary:
 
-(1) The first token-level image text dataset (TokenIT ) is proposed, which consists of 20 million images and 1.8 billion high-quality token-mask pairs.
+(1) The first token-level image text dataset (TokenIT ) is proposed;
 
 (2) The first token-level text image foundation model, TokenOCR, is proposed to support downstream tasks.
 
