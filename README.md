@@ -51,6 +51,62 @@ python setup.py install
 If you don't use flash-attn, please modify the configs of [weights](https://huggingface.co/TongkunGuan/TokenOCR/tree/main), referring to [this](https://github.com/OpenGVLab/InternVL/issues/163#issuecomment-2114083407)
 
 <center>
+
+### Quick Start
+
+> \[!Warning\]
+> 🚨 Note: In our experience, the `TokenOCR-2048-Bilingual` series is better suited for building MLLMs than the `-seg` version.
+
+```python
+import os
+import torch
+from safetensors.torch import load_file
+from transformers import AutoTokenizer
+from internvl.model.internvl_chat import InternVLChatConfig, InternVisionModel
+from utils import  post_process, generate_similiarity_map, load_model, load_image
+
+checkpoint = 'xxx/checkpoint-370000'
+image_path = './demo_images/0000000.png'
+input_query = '11/12/2020'
+out_dir = 'results'
+
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir, exist_ok=True)
+
+"""loading model, tokenizer, tok_embeddings """
+tokenizer = AutoTokenizer.from_pretrained(checkpoint, trust_remote_code=True, use_fast=False)
+config = InternVLChatConfig.from_pretrained(checkpoint)
+state_dict = load_file(checkpoint+'/model.safetensors')
+model, tok_embeddings = load_model(config, state_dict)
+model = model.cuda()
+tok_embeddings = tok_embeddings.cuda()
+
+"""loading image """
+pixel_values, images, target_aspect_ratio = load_image(image_path)
+ 
+
+"""loading query texts """
+if input_query[0] in '!"#$%&\'()*+,-./0123456789:;<=>?@^_{|}~0123456789':
+    input_ids = tokenizer(input_query)['input_ids'][1:]
+else:
+    input_ids = tokenizer(' '+input_query)['input_ids'][1:]
+input_ids = torch.Tensor(input_ids).long().to(model.device)
+input_embeds = tok_embeddings(input_ids).clone()
+all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
+
+
+"""Obtaining similarity """
+vit_embeds = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
+vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
+token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
+input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
+similarity = input_embedings @ token_features.t()
+attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_size[1])
+
+"""generate map locally """
+generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
+```
+
   
 <!-- # Token Family (TokenIT, TokenOCR, TokenVL) -->
 <h2 style="color: #4CAF50;">Token Family (TokenIT, TokenOCR, TokenVL)</h2>
@@ -111,61 +167,6 @@ In the following table, we provide all models [🤗 link](https://huggingface.co
 |  TokenOCR-4096-Chinese  |  feature dimension is 4096; support interactive with Chinese texts.  |
 |  TokenOCR-2048-Bilingual  |  feature dimension is 4096; support interactive with English and Chinese texts. |
 | TokenOCR-4096-English-seg |  On `TokenOCR-4096-English`, background noise is filtered out. You can use prompt ' ' to get a highlight background. |
-
-### Quick Start
-
-> \[!Warning\]
-> 🚨 Note: In our experience, the `TokenOCR-2048-Bilingual` series is better suited for building MLLMs than the `-seg` version.
-
-```python
-import os
-import torch
-from safetensors.torch import load_file
-from transformers import AutoTokenizer
-from internvl.model.internvl_chat import InternVLChatConfig, InternVisionModel
-from utils import  post_process, generate_similiarity_map, load_model, load_image
-
-checkpoint = 'xxx/checkpoint-370000'
-image_path = './demo_images/0000000.png'
-input_query = '11/12/2020'
-out_dir = 'results'
-
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir, exist_ok=True)
-
-"""loading model, tokenizer, tok_embeddings """
-tokenizer = AutoTokenizer.from_pretrained(checkpoint, trust_remote_code=True, use_fast=False)
-config = InternVLChatConfig.from_pretrained(checkpoint)
-state_dict = load_file(checkpoint+'/model.safetensors')
-model, tok_embeddings = load_model(config, state_dict)
-model = model.cuda()
-tok_embeddings = tok_embeddings.cuda()
-
-"""loading image """
-pixel_values, images, target_aspect_ratio = load_image(image_path)
- 
-
-"""loading query texts """
-if input_query[0] in '!"#$%&\'()*+,-./0123456789:;<=>?@^_{|}~0123456789':
-    input_ids = tokenizer(input_query)['input_ids'][1:]
-else:
-    input_ids = tokenizer(' '+input_query)['input_ids'][1:]
-input_ids = torch.Tensor(input_ids).long().to(model.device)
-input_embeds = tok_embeddings(input_ids).clone()
-all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
-
-
-"""Obtaining similarity """
-vit_embeds = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
-vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
-token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
-input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
-similarity = input_embedings @ token_features.t()
-attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_size[1])
-
-"""generate map locally """
-generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
-```
 
 ### Evaluation on Vision Capability
 
