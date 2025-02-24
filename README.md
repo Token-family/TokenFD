@@ -57,6 +57,7 @@ If you don't use flash-attn, please modify the configs of [weights](https://hugg
 
 </center>
 
+<details>
 <!-- ## TokenIT -->
 <h2 style="color: #4CAF50;">TokenIT</h2>
 
@@ -85,7 +86,7 @@ The comparisons with other visual foundation models:
 | [SAM](https://github.com/facebookresearch/SAM)  | pixel-level | SA1B     | 11M    | 1.1B   |
 | **TokenOCR**           | **token-level** | **TokenIT**  | **20M**    | **1.8B**   |
 
-
+</details>
 <!-- ## TokenOCR
  -->
 <h2 style="color: #4CAF50;">TokenOCR</h2>
@@ -205,7 +206,7 @@ Please refer to our technical report for more details.
  -->
 
 <!-- ## TokenVL -->
-<h2 style="color: #4CAF50;">TokenVL</h2>
+<h2 style="color: #4CAF50;">TokenVL </h2>
 
 we employ the TokenOCR as the visual foundation model and further develop an MLLM, named TokenVL, tailored for document understanding. 
 Following the previous training paradigm, TokenVL also includes two stages: 
