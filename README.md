@@ -137,18 +137,19 @@ streamlit run gtk.py --server.port 8420
 - **Real-time Results**: Both models, based on internvl and resnet50, give users instant feedback in bpe.
 - **User-Friendly**: Designed to be intuitive, even for users without a technical background.
 
-Then a simple Web-UI to interactive:
-<div align="center">
-  <img width="1500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
-</div>
-</center>
-
 ### How to Use
 
 1.   **Access the Demo**: [Link to your Streamlit demo]
 2.   **Upload a Document or Image**: Use the interface to upload your files.
 3.   **Text input**: Input your text related to the content of the images.
 4.   **View Results**: See How models generate bpe visualizations in real time.
+
+Then a simple Web-UI to interactive:
+<div align="center">
+  <img width="1500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
+</div>
+</center>
+
 
 ### Feedback
 
