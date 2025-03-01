@@ -122,7 +122,7 @@ generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings,
 ```
 ## ✨ Streamlit Demo
 
-We are excited to present an interactive demo of our project using Streamlit.  This demo allows users to explore the capabilities of our model————TokenOCR.
+We are excited to present an interactive demo of our project using Streamlit.  This demo allows users to explore the capabilities of our model——TokenOCR.
 
 <center>
 To run the Streamlit demo, you need to wrap the dependencies and then run:
@@ -140,7 +140,7 @@ streamlit run app.py --server.port 8400
 
 ### How to Use
 
-1.   **Access the Demo**: [Link to your Streamlit demo]
+1.   **Access the Demo**: [[Link to your Streamlit demo](http://localhost:8400)]
 2.   **Upload a Document or Image**: Use the interface to upload your files.
 3.   **Text input**: Input your text related to the content of the images.
 4.   **View Results**: See How models generate bpe visualizations in real time.
@@ -154,7 +154,7 @@ Then a simple Web-UI to interactive:
 
 ### Feedback
 
-We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [contact information or GitHub issues].
+We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [[contact information or GitHub issues](https://github.com/Token-family/TokenOCR/issues)].
 
 
 
