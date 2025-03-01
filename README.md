@@ -120,20 +120,41 @@ attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_siz
 """generate map locally """
 generate_similiarity_map(images, attn_map, target_aspect_ratio, all_bpe_strings, out_dir)
 ```
-## ✨ Gradio Demo
+## ✨ Streamlit Demo
+
+We are excited to present an interactive demo of our project using Streamlit.  This demo allows users to explore the capabilities of our model————TokenOCR.
 
 <center>
-To run gradio demo, simply run:
+To run the Streamlit demo, you need to wrap the dependencies and then run:
 
 ```
 streamlit run gtk.py --server.port 8420
 ```
+
+### Features
+
+- **Interactive Interface**: Easily upload the image, enter the bpe you want to query, and click the RUN button to view the results of TokenOCR's processing.
+- **Real-time Results**: Both models, based on internvl and resnet50, give users instant feedback in bpe.
+- **User-Friendly**: Designed to be intuitive, even for users without a technical background.
 
 Then a simple Web-UI to interactive:
 <div align="center">
   <img width="1500" alt="image" src="https://github.com/user-attachments/assets/5d427eeb-a50e-4bd6-9239-8c2a9d2b072f">
 </div>
 </center>
+
+### How to Use
+
+1.   **Access the Demo**: [Link to your Streamlit demo]
+2.   **Upload a Document or Image**: Use the interface to upload your files.
+3.   **Text input**: Input your text related to the content of the images.
+4.   **View Results**: See How models generate bpe visualizations in real time.
+
+### Feedback
+
+We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [contact information or GitHub issues].
+
+
 
 ## 🏠 Token Family (TokenIT, TokenOCR, TokenVL)
 
