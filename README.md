@@ -35,9 +35,9 @@ we seamlessly replace previous VFMs with TokenOCR to construct a document-level 
 
 In summary:
 
-(1) **The first token-level image text dataset** (TokenIT) is proposed;
+(1) **`The first token-level image text dataset`** (TokenIT) is proposed;
 
-(2) **The first token-level text image foundation model**, TokenOCR, is proposed to support downstream tasks.
+(2) **`The first token-level text image foundation model`**, TokenOCR, is proposed to support downstream tasks.
 
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
 <center>
