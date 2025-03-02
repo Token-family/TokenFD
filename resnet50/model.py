@@ -21,11 +21,11 @@ class TokenOCR(nn.Module):
             p.requires_grad = False
 
         self.backbone = backbone
-        # init_tau=np.log(10)
-        # init_b=-2.71
-        # self.t_prime = nn.Parameter(torch.ones([]) * init_tau)
-        # self.b = nn.Parameter(torch.ones([]) * init_b)
-        # self.kb = True
+        init_tau=np.log(10)
+        init_b=-2.71
+        self.t_prime = nn.Parameter(torch.ones([]) * init_tau)
+        self.b = nn.Parameter(torch.ones([]) * init_b)
+        self.kb = True
         self.upsample = nn.Sequential(
                     nn.ConvTranspose2d(
             in_channels=2048,
@@ -133,7 +133,7 @@ class TokenOCR(nn.Module):
         #     print(f'loss2:{loss_s}')
         return loss1, loss2
 
-    def extract_feature_custom(self, pixel_values):
+    def forward_tokenocr(self, pixel_values):
         vit_embeds = self.backbone(pixel_values)
         vit_embeds = vit_embeds['0']
         h, w = vit_embeds.shape[2], vit_embeds.shape[3]

@@ -43,7 +43,7 @@ def load_tokenizer(tokenizer_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', type=str, default='/mnt/dolphinfs/ssd_pool/docker/user/hadoop-mt-ocr/guantongkun/PreTraining/R50/checkpoint.pth')
+    parser.add_argument('--checkpoint', type=str, default='/mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM_try/processed_models/r50/checkpoint.pth')
     parser.add_argument('--path', type=str, default='demo_images/00000002.jpg')
     parser.add_argument('--text_input', type=str, default='they however are not')
     parser.add_argument('--out_dir', type=str, default='visualization_dir')
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     input_ids = torch.Tensor(input_ids).long().to(device)
 
     # get similarity map             
-    vit_embeds, paded_size = model.extract_feature_custom(pixel_values)
+    vit_embeds, paded_size = model.forward_tokenocr(pixel_values)
     vit_embeds = vit_embeds.reshape(-1, vit_embeds.shape[-1])
     input_embeds = model.language_embedding(input_ids).clone()
     token_features = vit_embeds / vit_embeds.norm(dim=-1, keepdim=True)

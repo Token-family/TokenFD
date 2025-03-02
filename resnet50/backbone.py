@@ -81,5 +81,5 @@ class Backbone(BackboneBase):
 
 
 def build_backbone(args):
-    backbone = Backbone(args.backbone, train_backbone=True)
+    backbone = Backbone('resnet50', train_backbone=True)
     return backbone

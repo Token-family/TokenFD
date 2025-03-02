@@ -6,9 +6,7 @@
 
 import copy
 
-from internvl.model.internlm2.configuration_internlm2 import InternLM2Config
-from internvl.model.phi3.configuration_phi3 import Phi3Config
-from transformers import AutoConfig, LlamaConfig, Qwen2Config
+from transformers import AutoConfig
 from transformers.configuration_utils import PretrainedConfig
 from transformers.utils import logging
 
@@ -30,6 +28,7 @@ class InternVLChatConfig(PretrainedConfig):
             pad2square=False,
             select_layer=-1,
             force_image_size=None,
+            hidden_size=2048,
             downsample_ratio=0.5,
             template=None,
             dynamic_image_size=False,
@@ -39,26 +38,14 @@ class InternVLChatConfig(PretrainedConfig):
             max_dynamic_patch=6,
             **kwargs):
         super().__init__(**kwargs)
-
+        # import pdb; pdb.set_trace()
         if vision_config is None:
             vision_config = {}
             logger.info('vision_config is None. Initializing the InternVisionConfig with default values.')
 
-        if llm_config is None:
-            llm_config = {}
-            logger.info('llm_config is None. Initializing the LlamaConfig config with default values (`LlamaConfig`).')
-
         self.vision_config = InternVisionConfig(**vision_config)
-        if llm_config['architectures'][0] == 'LlamaForCausalLM':
-            self.llm_config = LlamaConfig(**llm_config)
-        elif llm_config['architectures'][0] == 'InternLM2ForCausalLM':
-            self.llm_config = InternLM2Config(**llm_config)
-        elif llm_config['architectures'][0] == 'Phi3ForCausalLM':
-            self.llm_config = Phi3Config(**llm_config)
-        elif llm_config['architectures'][0] == 'Qwen2ForCausalLM':
-            self.llm_config = Qwen2Config(**llm_config)
-        else:
-            raise ValueError('Unsupported architecture: {}'.format(llm_config['architectures'][0]))
+        self.llm_config = None
+        
         self.use_backbone_lora = use_backbone_lora
         self.use_llm_lora = use_llm_lora
         self.pad2square = pad2square
@@ -72,7 +59,7 @@ class InternVLChatConfig(PretrainedConfig):
         self.min_dynamic_patch = min_dynamic_patch
         self.max_dynamic_patch = max_dynamic_patch
 
-        self.hidden_size = self.llm_config.hidden_size
+        self.hidden_size = hidden_size
         self.tie_word_embeddings = False
 
         logger.info(f'vision_select_layer: {self.select_layer}')
@@ -89,7 +76,6 @@ class InternVLChatConfig(PretrainedConfig):
         """
         output = copy.deepcopy(self.__dict__)
         output['vision_config'] = self.vision_config.to_dict()
-        output['llm_config'] = self.llm_config.to_dict()
         output['model_type'] = self.__class__.model_type
         output['use_backbone_lora'] = self.use_backbone_lora
         output['use_llm_lora'] = self.use_llm_lora

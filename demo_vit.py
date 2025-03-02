@@ -3,16 +3,14 @@ import torch.nn as nn
 import os
 import argparse
 from PIL import Image
-from internvl.model import load_model_and_tokenizer_customed
 from internvl.train.dataset import dynamic_preprocess, build_transform
-from internvl.model.internvl_chat import InternVLChatConfig, InternVLChatModel, InternVisionModel
-from transformers import AutoTokenizer, AutoModel, CLIPImageProcessor
-from utils import get_transform, post_process, generate_similiarity_map, load_model
-from safetensors.torch import load_file
+from internvl.model.internvl_chat import InternVLChatModel
+from transformers import AutoTokenizer
+from utils import get_transform, post_process, generate_similiarity_map
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint', type=str, default='/mnt/dolphinfs/ssd_pool/docker/user/hadoop-mt-ocr/guantongkun/work_dirs/8B_all_32/checkpoint-370000')
+    parser.add_argument('--checkpoint', type=str, default='/mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM_try/processed_models/TokenOCR_4096_English_seg')
     parser.add_argument('--image_path', type=str, default='')
     parser.add_argument('--str', type=str, default='')
     parser.add_argument('--out_dir', type=str, default='results')
@@ -25,11 +23,8 @@ if __name__ == '__main__':
 
     """loading model, tokenizer, tok_embeddings """
     tokenizer = AutoTokenizer.from_pretrained(args.checkpoint, trust_remote_code=True, use_fast=False)
-    config = InternVLChatConfig.from_pretrained(args.checkpoint)
-    state_dict = load_file(args.checkpoint+'/model.safetensors')
-    model, tok_embeddings = load_model(config, state_dict)
+    model = InternVLChatModel.from_pretrained(args.checkpoint, low_cpu_mem_usage=True, torch_dtype=torch.bfloat16,load_in_8bit=args.load_in_8bit, load_in_4bit=args.load_in_4bit).eval()
     model = model.cuda()
-    tok_embeddings = tok_embeddings.cuda()
 
     """loading image """
     transform = get_transform(is_train=False, image_size=model.config.force_image_size)
@@ -42,23 +37,22 @@ if __name__ == '__main__':
     """loading query texts """
     input_ids = tokenizer(args.str)['input_ids'][1:]
     input_ids = torch.Tensor(input_ids).long().to(model.device)
-    input_embeds = tok_embeddings(input_ids).clone()
+    input_embeds = model.tok_embeddings(input_ids).clone()
     all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
 
 
     """Obtaining similarity """
-    vit_embeds = model.forward_tokenocr(pixel_values) #(vit_batch_size, 16*16, 2048)
-    vit_embeds_local = post_process(vit_embeds, target_aspect_ratio)
-    H, W, C = vit_embeds_local.shape
-    vit_embeds_local = vit_embeds_local.reshape(H*W, C)
+    vit_embeds, _ = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
+    # import pdb; pdb.set_trace()
+    vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
     token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
     input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
     similarity = input_embedings @ token_features.t()
-    attn_map = similarity.reshape(len(input_embedings), H, W)
+    attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_size[1])
 
     """generate map locally """
-    generate_similiarity_map(args, images, attn_map, all_bpe_strings, target_aspect_ratio)
+    generate_similiarity_map(images, attn_map, all_bpe_strings, args.out_dir, target_aspect_ratio)
     
 
     """user command """
-    # python demo.py --path /mnt/dolphinfs/ssd_pool/docker/user/hadoop-mt-ocr/guantongkun/PreTraining/InternVL/downstream_tasks/0000000.png --str 11/12/2020
+    # python demo_vit.py --image_path /mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM/demo_images/0000000.png --str 11/12/2020

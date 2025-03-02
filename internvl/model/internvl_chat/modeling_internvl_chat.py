@@ -40,7 +40,7 @@ def version_cmp(v1, v2, op='eq'):
 class InternVLChatModel(PreTrainedModel):
     config_class = InternVLChatConfig
     main_input_name = 'pixel_values'
-    base_model_prefix = 'language_model'
+    base_model_prefix = ''
     _no_split_modules = ['InternVisionModel', 'LlamaDecoderLayer', 'InternLM2DecoderLayer',
                          'Phi3DecoderLayer', 'Qwen2DecoderLayer']
     _supports_flash_attn_2 = True
@@ -58,7 +58,7 @@ class InternVLChatModel(PreTrainedModel):
         self.num_image_token = int((image_size // patch_size) ** 2 * (config.downsample_ratio ** 2))
         self.downsample_ratio = config.downsample_ratio
         self.ps_version = config.ps_version
-        self.llm_arch_name = config.llm_config.architectures[0]
+        # self.llm_arch_name = config.llm_config.architectures[0]
 
         logger.info(f'num_image_token: {self.num_image_token}')
         logger.info(f'ps_version: {self.ps_version}')
@@ -66,6 +66,8 @@ class InternVLChatModel(PreTrainedModel):
             self.vision_model = vision_model
         else:
             self.vision_model = InternVisionModel(config.vision_config)
+        self.tok_embeddings = nn.Embedding(config.vocab_size, config.hidden_size, 2).to(torch.bfloat16)
+
         # if language_model is not None:
         #     self.language_model = language_model
         # else:
@@ -81,7 +83,7 @@ class InternVLChatModel(PreTrainedModel):
         #         raise NotImplementedError(f'{config.llm_config.architectures[0]} is not implemented.')
 
         vit_hidden_size = config.vision_config.hidden_size
-        llm_hidden_size = config.llm_config.hidden_size
+        llm_hidden_size = config.hidden_size
 
         self.ocr_mlp = nn.Sequential(
             nn.LayerNorm(vit_hidden_size),
@@ -116,6 +118,29 @@ class InternVLChatModel(PreTrainedModel):
         self.t_prime = nn.Parameter(torch.ones([]) * init_tau)
         self.b = nn.Parameter(torch.ones([]) * init_b)
         self.kb = False
+        self.upsample = nn.Sequential(
+                    nn.ConvTranspose2d(
+            in_channels=1024,
+            out_channels=512,
+            kernel_size=4,
+            stride=2,
+            padding=1,
+            bias=False
+        ),
+        # nn.BatchNorm2d(512),
+        nn.SyncBatchNorm(512),
+        # 第二层反卷积：进一步上采样到目标分辨率
+        nn.ConvTranspose2d(
+            in_channels=512,
+            out_channels=1024,
+            kernel_size=4,
+            stride=2,
+            padding=1,
+            bias=False
+        ),
+        # nn.BatchNorm2d(1024),
+        nn.SyncBatchNorm(1024),
+        )
 
     def wrap_backbone_lora(self, r=128, lora_alpha=256, lora_dropout=0.05):
         lora_config = LoraConfig(
@@ -151,9 +176,9 @@ class InternVLChatModel(PreTrainedModel):
 
     def forward_tokenocr(self,
             pixel_values: torch.FloatTensor)-> Union[Tuple, CausalLMOutputWithPast]:
-        # vit_embeds = self.extract_feature_custom(pixel_values) #(vit_batch_size, 16*16, 2048)
-        vit_embeds = self.extract_feature_custom_no_upsample(pixel_values) #(vit_batch_size, 16*16, 2048)
-        return vit_embeds
+        vit_embeds = self.extract_feature_custom(pixel_values) #(vit_batch_size, 16*16, 2048)
+        # vit_embeds = self.extract_feature_custom_no_upsample(pixel_values) #(vit_batch_size, 16*16, 2048)
+        return vit_embeds, None
         
 
     
