@@ -16,7 +16,7 @@
 ## 📖 Table of Contents
 - [Introduction](#-introduction)
 - [Installation](#%EF%B8%8F-Installation)
-- [Quick Start](#-quick-Start)
+- [Quick Start](#-Quick-start)
 - [Gradio Demo](#-gradio-Demo)
 - [Token Family](#-token-family)
 - [Release Plans](#-Release-Plans)
