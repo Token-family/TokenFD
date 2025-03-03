@@ -18,6 +18,7 @@
 - [Installation](#%EF%B8%8F-Installation)
 - [Quick Start](#-Quick-start)
 - [Gradio Demo](#-gradio-Demo)
+- [BPE Token Visualization](#-bpe-token-visualization)
 - [Token Family](#-token-family)
 - [Release Plans](#-Release-Plans)
 
