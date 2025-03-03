@@ -157,11 +157,11 @@ Then a simple Web-UI to interactive:
 We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [[contact information or GitHub issues](https://github.com/Token-family/TokenOCR/issues)].
 
 ## 📺 BPE Token Visualization
-![Scene|Document|Code](./demo_images/sub1.pdf)
+![Scene|Document|Code](https://github.com/Token-family/TokenOCR/blob/main/demo_images/sub1.pdf)
 
-![Chart|Table|GUI](./demo_images/sub2.pdf)
+![Chart|Table|GUI](https://github.com/Token-family/TokenOCR/blob/main/demo_images/sub2.pdf)
 
-![Chinese|Punctuation](./demo_images/sub3.pdf)
+![Chinese|Punctuation](https://github.com/Token-family/TokenOCR/blob/main/demo_images/sub3.pdf)
 
 ## 🏠 Token Family (TokenIT, TokenOCR, TokenVL)
 
