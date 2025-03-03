@@ -107,12 +107,13 @@ all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
 
 
 """Obtaining similarity """
-vit_embeds, _ = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
-vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
-token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
-input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
-similarity = input_embedings @ token_features.t()
-attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_size[1])
+with torch.no_grad():
+  vit_embeds, _ = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
+  vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
+  token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
+  input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
+  similarity = input_embedings @ token_features.t()
+  attn_map = similarity.reshape(len(input_embedings), resized_size[0], resized_size[1])
 
 """generate map locally """
 generate_similiarity_map(images, attn_map, all_bpe_strings, out_dir, target_aspect_ratio)
