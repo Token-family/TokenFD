@@ -1,7 +1,6 @@
 streamlit==1.37.1
 pypdfium2
 PyMuPDF
-octo-rpc==0.4.7
 accelerate<1
 bitsandbytes==0.42.0
 decord
