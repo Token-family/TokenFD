@@ -17,9 +17,9 @@
 - [Introduction](#-introduction)
 - [Installation](#%EF%B8%8F-Installation)
 - [Quick Start](#-Quick-start)
-- [Gradio Demo](#-gradio-Demo)
+- [Gradio Demo](#-streamlit-demo)
 - [BPE Token Visualization](#-bpe-token-visualization)
-- [Token Family](#-token-family)
+- [Token Family](#-Token-family)
 - [Release Plans](#-Release-Plans)
 
   
@@ -165,7 +165,7 @@ We welcome any feedback or suggestions to improve the demo. Please feel free to 
 
 [Chinese|Punctuation](https://drive.google.com/file/d/1-FO6IWVP9zritGd0ufRlzPJbFH9WMoT8/view?usp=sharing)
 
-## 🏠 Token Family (TokenIT, TokenOCR, TokenVL)
+## 🏠 Token Family
 
 </center>
 
