@@ -17,7 +17,7 @@
 - [Introduction](#-introduction)
 - [Installation](#%EF%B8%8F-Installation)
 - [Quick Start](#-Quick-start)
-- [Gradio Demo](#-streamlit-demo)
+- [Streamlit Demo](#-streamlit-demo)
 - [BPE Token Visualization](#-bpe-token-visualization)
 - [Token Family](#-Token-family)
 - [Release Plans](#-Release-Plans)
