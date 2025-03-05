@@ -3,7 +3,7 @@
 <h1 style="color: black;">A Token-level Text Image Foundation Model for Document Understanding</h1>
 
 
-[\[📂 Project Pages\]](https://token-family.github.io/TokenOCR_project/)    [\[📖 Paper\]]()  [\[🤗 Weights\]](https://huggingface.co/TongkunGuan/TokenOCR) [\[🤗 Demo\]](https://huggingface.co/spaces/TongkunGuan/TokenOCR) [\[🚀 Quick Start\]](#-Quick-start)  
+[\[📂 Project Pages\]](https://token-family.github.io/TokenOCR_project/)    [\[📖 Paper\]](https://arxiv.org/pdf/2503.02304)  [\[🤗 Weights\]](https://huggingface.co/TongkunGuan/TokenOCR) [\[🤗 Demo\]](https://huggingface.co/spaces/TongkunGuan/TokenOCR) [\[🚀 Quick Start\]](#-Quick-start)  
 
 </center>
 
