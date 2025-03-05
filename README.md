@@ -220,10 +220,8 @@ In the following table, we provide all models [🤗 link](https://huggingface.co
 
 |        Model Name         |                                Description                                |
 | :-----------------------: | :-------------------------------------------------------------------: |
-<!-- | TokenOCR-4096-English | feature dimension is 4096; support interactive with English texts.| -->
-<!-- |  TokenOCR-4096-Chinese  |  feature dimension is 4096; support interactive with Chinese texts.  | -->
-|  TokenOCR-2048-Bilingual  |  feature dimension is 4096; support interactive with English and Chinese texts. |
-| TokenOCR-4096-English-seg |  On `TokenOCR-4096-English`, background noise is filtered out. You can use prompt ' ' to get a highlight background. |
+| TokenOCR_2048_Bilingual_seg |  Backbone is ViT；feature dimension is 2048; support interactive with English and Chinese texts. |
+| TokenOCR_4096_English_seg |  (We recommend 👍) Backbone is ViT; feature dimension is 4096; only supports interactive with English texts. You can use prompt ' ' to get a highlight background. |
 
 ### Evaluation on Vision Capability
 
