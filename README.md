@@ -319,7 +319,7 @@ If you find this project useful in your research, please consider citing:
 @inproceedings{guan2025TokenOCR,
   title={A Token-level Text Image Foundation Model for Document Understanding},
   author={Tongkun Guan, Zining Wang, Pei Fu, Zhentao Guo, Wei Shen, Kai zhou, Tiezhu Yue, Chen Duan, Hao Sun, Qianyi Jiang, Junfeng Luo, Xiaokang Yang},
-    journal={arXiv preprint arXiv:2503.02304},
+  journal={arXiv preprint arXiv:2503.02304},
   year={2025}
 }
 ```
