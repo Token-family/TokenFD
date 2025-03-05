@@ -216,12 +216,12 @@ applications, including text segmentation, retrieval, and visual question answer
 
 ### Model Cards
 
-In the following table, we provide all models [🤗 link](https://huggingface.co/TongkunGuan/TokenOCR/tree/main) of the TokenOCR series.
+In the following table, we provide all models [🤗 link](https://huggingface.co/TongkunGuan/TokenOCR/tree/main) of the TokenOCR series.  You can use prompt ' ' to get a highlight background. 
 
 |        Model Name         |                                Description                                |
 | :-----------------------: | :-------------------------------------------------------------------: |
 | TokenOCR_2048_Bilingual_seg |  Backbone is ViT；feature dimension is 2048; support interactive with English and Chinese texts. |
-| TokenOCR_4096_English_seg |  (We recommend 👍) Backbone is ViT; feature dimension is 4096; only supports interactive with English texts. You can use prompt ' ' to get a highlight background. |
+| TokenOCR_4096_English_seg |  (We recommend 👍) Backbone is ViT; feature dimension is 4096; only supports interactive with English texts.|
 
 ### Evaluation on Vision Capability
 
