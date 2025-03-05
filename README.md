@@ -220,8 +220,8 @@ In the following table, we provide all models [🤗 link](https://huggingface.co
 
 |        Model Name         |                                Description                                |
 | :-----------------------: | :-------------------------------------------------------------------: |
-| TokenOCR-4096-English | feature dimension is 4096; support interactive with English texts.|
-|  TokenOCR-4096-Chinese  |  feature dimension is 4096; support interactive with Chinese texts.  |
+<!-- | TokenOCR-4096-English | feature dimension is 4096; support interactive with English texts.| -->
+<!-- |  TokenOCR-4096-Chinese  |  feature dimension is 4096; support interactive with Chinese texts.  | -->
 |  TokenOCR-2048-Bilingual  |  feature dimension is 4096; support interactive with English and Chinese texts. |
 | TokenOCR-4096-English-seg |  On `TokenOCR-4096-English`, background noise is filtered out. You can use prompt ' ' to get a highlight background. |
 
@@ -302,6 +302,7 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 ## 🤚 Release Plans
 
 ✅ Inference code and weights for TokenOCR
+- [x] Release Character-level Text Image Foundation Model (CharOCR)
 - [x] Code & model checkpoint for TokenVL
 - [x] Data for the Pre-training and Fine-tuning of TokenVL
 - [x] TokenIT data and script
