@@ -211,8 +211,9 @@ features are aligned within the same semantic space. This “image-as-text” al
 applications, including text segmentation, retrieval, and visual question answering.
 
 <div align="center">
-  <img width="1000" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/QTsvWxFJFTnISdhvbfZhD.png">
+  <img width="1000" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/6vNkEPzolBWVM--beoxLI.png">
 </div>
+
 
 ### Model Cards
 
@@ -238,16 +239,15 @@ Please refer to our technical report for more details.
 #### text retrial
 
 <div align="left">
-  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/b2b2g23o9GMmPe1PiCn0f.png">
+  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/wlLcdB0hpC666PrEQSDaM.png">
 </div>
-
 
 <!-- ![image/png](https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/b2b2g23o9GMmPe1PiCn0f.png) -->
 
 #### image segmentation
 
 <div align="left">
-  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/C15-Ica6XVfX6y_MgiVds.png">
+  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/0HqFXP8OC2tLH4d7scdMt.png">
 </div>
 
 <!-- ![image/png](https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/C15-Ica6XVfX6y_MgiVds.png) -->
@@ -255,8 +255,9 @@ Please refer to our technical report for more details.
 #### visual question answering
 
 <div align="left">
-  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/IbLZ0CxCxDkTaHAMe7M0Q.png">
+  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/3PBP0akDiMbupu_Gr7lzP.png">
 </div>
+
 
 <!-- ![image/png](https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/IbLZ0CxCxDkTaHAMe7M0Q.png)
  -->
@@ -271,7 +272,7 @@ Following the previous training paradigm, TokenVL also includes two stages:
 **Stage 1: LLM-guided Token Alignment Training for text parsing tasks.**
 
 <div align="center">
-  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/gDr1fQg7I1nTIsiRWNHTr.png">
+  <img width="500" alt="image" src="https://cdn-uploads.huggingface.co/production/uploads/650d4a36cbd0c7d550d3b41b/5ZCzz1tYy0bnIIZFxgTPN.png">
 </div>
 
 The framework of LLM-guided Token Alignment Training. Existing MLLMs primarily enhance spatial-wise text perception capabilities by integrating localization prompts to predict coordinates. However, this implicit
