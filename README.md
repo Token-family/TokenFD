@@ -3,7 +3,7 @@
 <h1 style="color: black;">A Token-level Text Image Foundation Model for Document Understanding</h1>
 
 
-[\[📂 Project Pages\]](https://token-family.github.io/project_page)    [\[📖 Paper\]](https://arxiv.org/pdf/2503.02304)  [\[🤗 Weights\]](https://huggingface.co/TongkunGuan/TokenOCR) [\[🤗 Demo\]](https://huggingface.co/spaces/TongkunGuan/TokenOCR) [\[🚀 Quick Start\]](#-Quick-start)  
+[\[📂 Project Pages\]](https://token-family.github.io/project_page)    [\[📖 Paper\]](https://arxiv.org/pdf/2503.02304)  [\[🤗 Weights\]](https://huggingface.co/TongkunGuan/TokenFD) [\[🤗 Demo\]](https://huggingface.co/spaces/TongkunGuan/Token-level_Text_Image_Foundation_Model) [\[🚀 Quick Start\]](#-Quick-start)  
 
 </center>
 
@@ -315,9 +315,9 @@ This project is released under the MIT License.
 If you find this project useful in your research, please consider citing:
 
 ```BibTeX
-@inproceedings{guan2025TokenOCR,
+@article{guan2025token,
   title={A Token-level Text Image Foundation Model for Document Understanding},
-  author={Tongkun Guan, Zining Wang, Pei Fu, Zhentao Guo, Wei Shen, Kai zhou, Tiezhu Yue, Chen Duan, Hao Sun, Qianyi Jiang, Junfeng Luo, Xiaokang Yang},
+  author={Guan, Tongkun and Wang, Zining and Fu, Pei and Guo, Zhengtao and Shen, Wei and Zhou, Kai and Yue, Tiezhu and Duan, Chen and Sun, Hao and Jiang, Qianyi and others},
   journal={arXiv preprint arXiv:2503.02304},
   year={2025}
 }
