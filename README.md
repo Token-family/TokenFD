@@ -27,18 +27,18 @@
 
 </center>
 
-We are excited to announce the release of **`TokenOCR`**, the first token-level visual foundation model specifically tailored for text-image-related tasks, 
-designed to support a variety of traditional downstream applications. To facilitate the pretraining of TokenOCR, 
+We are excited to announce the release of **`TokenFD`**, the first token-level visual foundation model specifically tailored for text-image-related tasks, 
+designed to support a variety of traditional downstream applications. To facilitate the pretraining of TokenFD, 
 we also devise a high-quality data production pipeline that constructs the first token-level image text dataset, 
 **`TokenIT`**, comprising 20 million images and 1.8 billion token-mask pairs. 
 Furthermore, leveraging this foundation with exceptional image-as-text capability, 
-we seamlessly replace previous VFMs with TokenOCR to construct a document-level MLLM, **`TokenVL`**, for VQA-based document understanding tasks. 
+we seamlessly replace previous VFMs with TokenFD to construct a document-level MLLM, **`TokenVL`**, for VQA-based document understanding tasks. 
 
 In summary:
 
 (1) **`The first token-level image text dataset`** (TokenIT) is proposed;
 
-(2) **`The first token-level text image foundation model`**, TokenOCR, is proposed to support downstream tasks.
+(2) **`The first token-level text image foundation model`**, TokenFD, is proposed to support downstream tasks.
 
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
 <center>
@@ -48,8 +48,8 @@ In summary:
 </center>
 
 ```
-conda create -n tokenocr python=3.9
-conda activate tokenocr
+conda create -n TokenFD python=3.9
+conda activate TokenFD
 pip install -r requirements.txt
 ```
 Install flash-attn==2.3.6 (optional):
@@ -63,14 +63,14 @@ cd flash-attention
 git checkout v2.3.6
 python setup.py install
 ```
-If you don't use flash-attn, please modify the configs of [weights](https://huggingface.co/TongkunGuan/TokenOCR/tree/main), referring to [this](https://github.com/OpenGVLab/InternVL/issues/163#issuecomment-2114083407)
+If you don't use flash-attn, please modify the configs of [weights](https://huggingface.co/TongkunGuan/TokenFD/tree/main), referring to [this](https://github.com/OpenGVLab/InternVL/issues/163#issuecomment-2114083407)
 
 <center>
 
 ## 🚀 Quick Start
 
 <!-- > \[!Warning\]
-> 🚨 Note: In our experience, the `TokenOCR-2048-Bilingual` series is better suited for building MLLMs than the `-seg` version. -->
+> 🚨 Note: In our experience, the `TokenFD-2048-Bilingual` series is better suited for building MLLMs than the `-seg` version. -->
 
 ```python
 import os
@@ -79,7 +79,7 @@ from transformers import AutoTokenizer
 from internvl.model.internvl_chat import InternVLChatModel
 from utils import post_process, generate_similiarity_map, load_image
 
-checkpoint = '/mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM_try/processed_models/TokenOCR_4096_English_seg'
+checkpoint = '/mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM_try/processed_models/TokenFD_4096_English_seg'
 image_path = './demo_images/0000000.png'
 input_query = '11/12/2020'
 out_dir = 'results'
@@ -108,7 +108,7 @@ all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
 
 """Obtaining similarity """
 with torch.no_grad():
-  vit_embeds, _ = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
+  vit_embeds, _ = model.forward_TokenFD(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
   vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
   token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
   input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
@@ -124,7 +124,7 @@ generate_similiarity_map(images, attn_map, all_bpe_strings, out_dir, target_aspe
 ```
 ## ✨ Streamlit Demo
 
-We are excited to present an interactive demo of our project using Streamlit.  This demo allows users to explore the capabilities of our model——TokenOCR.
+We are excited to present an interactive demo of our project using Streamlit.  This demo allows users to explore the capabilities of our model——TokenFD.
 
 <center>
 To run the Streamlit demo, you need to wrap the dependencies and then run:
@@ -136,7 +136,7 @@ streamlit run app.py --server.port 8400
 
 ### Features
 
-- **Interactive Interface**: Easily upload the image, enter the bpe you want to query, and click the RUN button to view the results of TokenOCR's processing.
+- **Interactive Interface**: Easily upload the image, enter the bpe you want to query, and click the RUN button to view the results of TokenFD's processing.
 - **Real-time Results**: Both models, based on internvl and resnet50, give users instant feedback in bpe.
 - **User-Friendly**: Designed to be intuitive, even for users without a technical background.
 
@@ -156,7 +156,7 @@ Then a simple Web-UI to interactive:
 
 ### Feedback
 
-We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [[contact information or GitHub issues](https://github.com/Token-family/TokenOCR/issues)].
+We welcome any feedback or suggestions to improve the demo. Please feel free to reach out via [[contact information or GitHub issues](https://github.com/Token-family/TokenFD/issues)].
 
 ## 📺 BPE Token Visualization
 [Scene|Document|Code](https://drive.google.com/file/d/16DbVy4dMuVCTjnTFAV5ebvs37TFhjylx/view?usp=sharing)
@@ -196,17 +196,17 @@ The comparisons with other visual foundation models:
 | [CLIP](https://github.com/openai/CLIP) | image-level | WIT400M  | 400M   | 0.4B   |
 | [DINO](https://github.com/facebookresearch/dino) | image-level | ImageNet | 14M    | -      |
 | [SAM](https://github.com/facebookresearch/SAM)  | pixel-level | SA1B     | 11M    | 1.1B   |
-| **TokenOCR**           | **token-level** | **TokenIT**  | **20M**    | **1.8B**   |
+| **TokenFD**           | **token-level** | **TokenIT**  | **20M**    | **1.8B**   |
 
 </details>
 
 
-<details><summary>TokenOCR</summary>
-<h2 style="color: #4CAF50;">TokenOCR</h2>
+<details><summary>TokenFD</summary>
+<h2 style="color: #4CAF50;">TokenFD</h2>
 
 ### Model Architecture
 
-An overview of the proposed TokenOCR, where the token-level image features and token-level language
+An overview of the proposed TokenFD, where the token-level image features and token-level language
 features are aligned within the same semantic space. This “image-as-text” alignment seamlessly facilitates user-interactive
 applications, including text segmentation, retrieval, and visual question answering.
 
@@ -216,12 +216,12 @@ applications, including text segmentation, retrieval, and visual question answer
 
 ### Model Cards
 
-In the following table, we provide all models [🤗 link](https://huggingface.co/TongkunGuan/TokenOCR/tree/main) of the TokenOCR series.  You can use prompt ' ' to get a highlight background. 
+In the following table, we provide all models [🤗 link](https://huggingface.co/TongkunGuan/TokenFD/tree/main) of the TokenFD series.  You can use prompt ' ' to get a highlight background. 
 
 |        Model Name         |                                Description                                |
 | :-----------------------: | :-------------------------------------------------------------------: |
-| TokenOCR_2048_Bilingual_seg |  Backbone is ViT；feature dimension is 2048; support interactive with English and Chinese texts. |
-| TokenOCR_4096_English_seg |  (We recommend 👍) Backbone is ViT; feature dimension is 4096; only supports interactive with English texts.|
+| TokenFD_2048_Bilingual_seg |  Backbone is ViT；feature dimension is 2048; support interactive with English and Chinese texts. |
+| TokenFD_4096_English_seg |  (We recommend 👍) Backbone is ViT; feature dimension is 4096; only supports interactive with English texts.|
 
 ### Evaluation on Vision Capability
 
@@ -232,7 +232,7 @@ The evaluation is divided into two key categories:
 (2) image segmentation;
 (3) visual question answering;
 
-This approach allows us to assess the representation quality of TokenOCR. 
+This approach allows us to assess the representation quality of TokenFD. 
 Please refer to our technical report for more details.
 
 #### text retrial
@@ -265,7 +265,7 @@ Please refer to our technical report for more details.
 <details><summary>TokenVL</summary>
 <h2 style="color: #4CAF50;">TokenVL </h2>
 
-we employ the TokenOCR as the visual foundation model and further develop an MLLM, named TokenVL, tailored for document understanding. 
+we employ the TokenFD as the visual foundation model and further develop an MLLM, named TokenVL, tailored for document understanding. 
 Following the previous training paradigm, TokenVL also includes two stages: 
 
 **Stage 1: LLM-guided Token Alignment Training for text parsing tasks.**
@@ -299,7 +299,7 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 
 ## 🤚 Release Plans
 
-✅ Inference code and weights for TokenOCR
+✅ Inference code and weights for TokenFD
 - [x] Release Character-level Text Image Foundation Model (CharOCR)
 - [x] Code & model checkpoint for TokenVL
 - [x] Data for the Pre-training and Fine-tuning of TokenVL
