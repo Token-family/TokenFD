@@ -108,7 +108,7 @@ all_bpe_strings = [tokenizer.decode(input_id) for input_id in input_ids]
 
 """Obtaining similarity """
 with torch.no_grad():
-  vit_embeds, _ = model.forward_TokenFD(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
+  vit_embeds, _ = model.forward_tokenocr(pixel_values.to(model.device)) #(vit_batch_size, 16*16, 2048)
   vit_embeds_local, resized_size = post_process(vit_embeds, target_aspect_ratio)
   token_features = vit_embeds_local / vit_embeds_local.norm(dim=-1, keepdim=True)
   input_embedings = input_embeds / input_embeds.norm(dim=-1, keepdim=True)
