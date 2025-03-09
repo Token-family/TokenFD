@@ -27,6 +27,8 @@
 
 </center>
 
+![A simple demo](https://github.com/Token-family/TokenFD/blob/main/demo_images/TokenFD.gif)
+
 We are excited to announce the release of **`TokenFD`**, the first token-level visual foundation model specifically tailored for text-image-related tasks, 
 designed to support a variety of traditional downstream applications. To facilitate the pretraining of TokenFD, 
 we also devise a high-quality data production pipeline that constructs the first token-level image text dataset, 
@@ -43,7 +45,6 @@ In summary:
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
 <center>
 
-![A simple demo](https://github.com/Token-family/TokenFD/blob/main/demo_images/TokenFD.gif)
 
 ## 🛠️ Installation
 
