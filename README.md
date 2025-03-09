@@ -43,7 +43,7 @@ In summary:
 (3) The image-as-text semantic capability inspires us to develop TokenVL, a VQA-based MLLM tailored for document perception, understanding, and reasoning.
 <center>
 
-![A simple demo]()
+![A simple demo](https://github.com/Token-family/TokenFD/blob/main/demo_images/TokenFD.gif)
 
 ## 🛠️ Installation
 
