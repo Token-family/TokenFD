@@ -133,8 +133,9 @@ We are excited to present an interactive demo of our project using Streamlit.  T
 To run the Streamlit demo, you need to wrap the dependencies and then run:
 
 ```
+cd streamlit_demo
 pip install requirement_app.txt
-streamlit run app.py --server.port 8400
+sh run.sh
 ```
 
 ### Features
