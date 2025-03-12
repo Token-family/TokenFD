@@ -153,7 +153,7 @@ sh run.sh
 
 Then a simple Web-UI to interactive:
 <div align="center">
-  <img width="1500" alt="image" src="https://github.com/Token-family/TokenFD/demo_images/WX20250312-191530@2x.png">
+  <img width="1500" alt="image" src="https://github.com/Token-family/TokenFD/blob/main/demo_images/WX20250312-191530%402x.png">
 </div>
 </center>
 
