@@ -82,7 +82,7 @@ from transformers import AutoTokenizer
 from internvl.model.internvl_chat import InternVLChatModel
 from utils import post_process, generate_similiarity_map, load_image
 
-checkpoint = '/mnt/dolphinfs/hdd_pool/docker/user/hadoop-mt-ocr/guantongkun/VFM_try/processed_models/TokenFD_4096_English_seg'
+checkpoint = './TokenFD_4096_English_seg'
 image_path = './demo_images/0000000.png'
 input_query = '11/12/2020'
 out_dir = 'results'
