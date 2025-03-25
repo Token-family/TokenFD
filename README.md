@@ -29,7 +29,7 @@
 
 ![A simple demo](https://github.com/Token-family/TokenFD/blob/main/demo_images/TokenFD.gif)
 
-https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking.mp4
+https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking
 
 We are excited to announce the release of **`TokenFD`**, the first token-level visual foundation model specifically tailored for text-image-related tasks, 
 designed to support a variety of traditional downstream applications. To facilitate the pretraining of TokenFD, 
