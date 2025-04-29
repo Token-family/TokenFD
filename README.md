@@ -29,8 +29,6 @@
 
 ![A simple demo](https://github.com/Token-family/TokenFD/blob/main/demo_images/TokenFD.gif)
 
-<video width="630" height="300" src="https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking.mp4"></video>
-
 We are excited to announce the release of **`TokenFD`**, the first token-level visual foundation model specifically tailored for text-image-related tasks, 
 designed to support a variety of traditional downstream applications. To facilitate the pretraining of TokenFD, 
 we also devise a high-quality data production pipeline that constructs the first token-level image text dataset, 
@@ -311,6 +309,13 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 - [x] Code & model checkpoint for TokenVL
 - [x] Data for the Pre-training and Fine-tuning of TokenVL
 - [x] TokenIT data and script
+
+## More Applications
+
+### Text Tracking
+
+<video width="630" height="300" src="https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking.mp4"></video>
+
 
 
 ## 🏛 License
