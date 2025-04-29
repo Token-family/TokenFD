@@ -314,7 +314,7 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 
 ### Text Tracking
 
-<video width="630" height="300" src="https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking.mp4"></video>
+Please refer https://github.com/Token-family/TokenFD/blob/main/demo_images/text_tracking.mp4
 
 
 
