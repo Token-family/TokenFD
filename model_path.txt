@@ -1,0 +1,4 @@
+R50: https://huggingface.co/TongkunGuan/R50
+TokenFD_4096_English_seg: https://huggingface.co/TongkunGuan/TokenFD_4096_English_seg
+TokenFD_2048_Bilingual_seg: https://huggingface.co/TongkunGuan/TokenFD_2048_Bilingual_seg
+TokenFD_4096_Bilingual_no_upsample: https://huggingface.co/TongkunGuan/xxxx
