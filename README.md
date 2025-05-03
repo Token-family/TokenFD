@@ -202,6 +202,8 @@ The comparisons with other visual foundation models:
 | [SAM](https://github.com/facebookresearch/SAM)  | pixel-level | SA1B     | 11M    | 1.1B   |
 | **TokenFD**           | **token-level** | **TokenIT**  | **20M**    | **1.8B**   |
 
+Since this dataset is very large, we will temporarily open source some data here! [TokenIT demo link](https://huggingface.co/datasets/TongkunGuan/TokenIT_demo)
+
 </details>
 
 
