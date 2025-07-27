@@ -60,7 +60,8 @@ def load_model_and_tokenizer_customed(args):
         args.checkpoint, low_cpu_mem_usage=True, torch_dtype=torch.bfloat16,
         load_in_8bit=args.load_in_8bit, load_in_4bit=args.load_in_4bit, **kwargs).eval()
     if not args.load_in_8bit and not args.load_in_4bit and not args.auto:
+        # if args.llm:
         del model.language_model.model.layers
         del model.language_model.output
+        model = model.cuda()
     return model, tokenizer
-

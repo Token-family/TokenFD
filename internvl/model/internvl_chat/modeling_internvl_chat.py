@@ -25,7 +25,7 @@ from transformers.utils import ModelOutput, logging
 
 from .configuration_internvl_chat import InternVLChatConfig
 from .modeling_intern_vit import InternVisionModel
-
+from .modeling_tokenvl_encoder import TokenvlVisionExtra, TokenReducer
 logger = logging.get_logger(__name__)
 
 
@@ -40,7 +40,7 @@ def version_cmp(v1, v2, op='eq'):
 class InternVLChatModel(PreTrainedModel):
     config_class = InternVLChatConfig
     main_input_name = 'pixel_values'
-    base_model_prefix = ''
+    base_model_prefix = 'language_model'
     _no_split_modules = ['InternVisionModel', 'LlamaDecoderLayer', 'InternLM2DecoderLayer',
                          'Phi3DecoderLayer', 'Qwen2DecoderLayer']
     _supports_flash_attn_2 = True
@@ -58,7 +58,7 @@ class InternVLChatModel(PreTrainedModel):
         self.num_image_token = int((image_size // patch_size) ** 2 * (config.downsample_ratio ** 2))
         self.downsample_ratio = config.downsample_ratio
         self.ps_version = config.ps_version
-        # self.llm_arch_name = config.llm_config.architectures[0]
+        self.llm_arch_name = config.llm_config.architectures[0]
 
         logger.info(f'num_image_token: {self.num_image_token}')
         logger.info(f'ps_version: {self.ps_version}')
@@ -66,38 +66,125 @@ class InternVLChatModel(PreTrainedModel):
             self.vision_model = vision_model
         else:
             self.vision_model = InternVisionModel(config.vision_config)
-        self.tok_embeddings = nn.Embedding(config.vocab_size, config.hidden_size, 2).to(torch.bfloat16)
-
-        # if language_model is not None:
-        #     self.language_model = language_model
-        # else:
-        #     if config.llm_config.architectures[0] == 'LlamaForCausalLM':
-        #         self.language_model = LlamaForCausalLM(config.llm_config)
-        #     elif config.llm_config.architectures[0] == 'InternLM2ForCausalLM':
-        #         self.language_model = InternLM2ForCausalLM(config.llm_config)
-        #     elif config.llm_config.architectures[0] == 'Phi3ForCausalLM':
-        #         self.language_model = Phi3ForCausalLM(config.llm_config)
-        #     elif config.llm_config.architectures[0] == 'Qwen2ForCausalLM':
-        #         self.language_model = Qwen2ForCausalLM(config.llm_config)
-        #     else:
-        #         raise NotImplementedError(f'{config.llm_config.architectures[0]} is not implemented.')
+        if language_model is not None:
+            self.language_model = language_model
+        else:
+            if config.llm_config.architectures[0] == 'LlamaForCausalLM':
+                self.language_model = LlamaForCausalLM(config.llm_config)
+            elif config.llm_config.architectures[0] == 'InternLM2ForCausalLM':
+                self.language_model = InternLM2ForCausalLM(config.llm_config)
+            elif config.llm_config.architectures[0] == 'Phi3ForCausalLM':
+                self.language_model = Phi3ForCausalLM(config.llm_config)
+            elif config.llm_config.architectures[0] == 'Qwen2ForCausalLM':
+                self.language_model = Qwen2ForCausalLM(config.llm_config)
+            else:
+                raise NotImplementedError(f'{config.llm_config.architectures[0]} is not implemented.')
 
         vit_hidden_size = config.vision_config.hidden_size
-        llm_hidden_size = config.hidden_size
+        llm_hidden_size = config.llm_config.hidden_size
 
-        self.ocr_mlp = nn.Sequential(
-            nn.LayerNorm(vit_hidden_size),
-            nn.Linear(vit_hidden_size, llm_hidden_size),
-            nn.GELU(),
-            nn.Linear(llm_hidden_size, llm_hidden_size)
-        )
-        if config.train_stage > 1:
+        
+        if config.train_stage == 1:
+            self.ocr_mlp = nn.Sequential(
+                nn.LayerNorm(vit_hidden_size),
+                nn.Linear(vit_hidden_size, llm_hidden_size),
+                nn.GELU(),
+                nn.Linear(llm_hidden_size, llm_hidden_size)
+            )
+
+            init_tau=np.log(10)
+            init_b=-2.71
+            self.t_prime = nn.Parameter(torch.ones([]) * init_tau)
+            self.b = nn.Parameter(torch.ones([]) * init_b)
+            self.kb = False
+            self.upsample = nn.Sequential(
+                nn.ConvTranspose2d(
+                in_channels=1024,
+                out_channels=512,
+                kernel_size=4,
+                stride=2,
+                padding=1,
+                bias=False),
+                # nn.BatchNorm2d(512),
+                nn.SyncBatchNorm(512),
+                # 第二层反卷积：进一步上采样到目标分辨率
+                nn.ConvTranspose2d(
+                    in_channels=512,
+                    out_channels=1024,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False),
+                # nn.BatchNorm2d(1024),
+                nn.SyncBatchNorm(1024),)
+
+        elif config.train_stage == 2:
+            
+            init_tau=np.log(10)
+            init_b=-2.71
+            self.t_prime = nn.Parameter(torch.ones([]) * 3.6719)
+            self.b = nn.Parameter(torch.ones([]) * init_b)
+            self.kb = False
+
+            self.token_level = config.token_level
+            self.select_token_level_layer_idx = 8
+            
+            self.mlp_mt = nn.Sequential(
+                nn.LayerNorm(vit_hidden_size * int(1 / self.downsample_ratio) ** 2),
+                nn.Linear(vit_hidden_size * int(1 / self.downsample_ratio) ** 2, llm_hidden_size),
+                nn.GELU(),
+                nn.Linear(llm_hidden_size, llm_hidden_size)
+            )
+
             self.mlp1 = nn.Sequential(
                 nn.LayerNorm(vit_hidden_size * int(1 / self.downsample_ratio) ** 2),
                 nn.Linear(vit_hidden_size * int(1 / self.downsample_ratio) ** 2, llm_hidden_size),
                 nn.GELU(),
                 nn.Linear(llm_hidden_size, llm_hidden_size)
             )
+            
+            self.reducer_mt = TokenReducer()
+            self.encoder_mt = TokenvlVisionExtra(config.vision_config)
+
+            self.upsample_token_level = nn.Sequential(
+                nn.ConvTranspose2d(
+                in_channels=llm_hidden_size,
+                out_channels=512,
+                kernel_size=4,
+                stride=2,
+                padding=1,
+                bias=False),
+                # nn.BatchNorm2d(512),
+                nn.SyncBatchNorm(512),
+                nn.ConvTranspose2d(
+                    in_channels=512,
+                    out_channels=llm_hidden_size,
+                    kernel_size=4,
+                    stride=2,
+                    padding=1,
+                    bias=False),
+                # nn.BatchNorm2d(1024),
+                nn.SyncBatchNorm(llm_hidden_size),)
+
+        else:
+            self.mlp_mt = nn.Sequential(
+                nn.LayerNorm(vit_hidden_size * int(1 / self.downsample_ratio) ** 2),
+                nn.Linear(vit_hidden_size * int(1 / self.downsample_ratio) ** 2, llm_hidden_size),
+                nn.GELU(),
+                nn.Linear(llm_hidden_size, llm_hidden_size)
+            )
+
+            self.mlp1 = nn.Sequential(
+                nn.LayerNorm(vit_hidden_size * int(1 / self.downsample_ratio) ** 2),
+                nn.Linear(vit_hidden_size * int(1 / self.downsample_ratio) ** 2, llm_hidden_size),
+                nn.GELU(),
+                nn.Linear(llm_hidden_size, llm_hidden_size)
+            )
+            self.reducer_mt = TokenReducer()
+            self.encoder_mt = TokenvlVisionExtra(config.vision_config)
+
+            self.token_level = False
+            self.select_token_level_layer_idx = None
 
         self.img_context_token_id = None
         self.conv_template = get_conv_template(self.template)
@@ -112,35 +199,10 @@ class InternVLChatModel(PreTrainedModel):
 
         if config.use_llm_lora:
             self.wrap_llm_lora(r=config.use_llm_lora, lora_alpha=2 * config.use_llm_lora)
+        
+        self.cur_stage = config.train_stage
 
-        init_tau=np.log(10)
-        init_b=-2.71
-        self.t_prime = nn.Parameter(torch.ones([]) * init_tau)
-        self.b = nn.Parameter(torch.ones([]) * init_b)
-        self.kb = False
-        self.upsample = nn.Sequential(
-                    nn.ConvTranspose2d(
-            in_channels=1024,
-            out_channels=512,
-            kernel_size=4,
-            stride=2,
-            padding=1,
-            bias=False
-        ),
-        # nn.BatchNorm2d(512),
-        nn.SyncBatchNorm(512),
-        # 第二层反卷积：进一步上采样到目标分辨率
-        nn.ConvTranspose2d(
-            in_channels=512,
-            out_channels=1024,
-            kernel_size=4,
-            stride=2,
-            padding=1,
-            bias=False
-        ),
-        # nn.BatchNorm2d(1024),
-        nn.SyncBatchNorm(1024),
-        )
+            
 
     def wrap_backbone_lora(self, r=128, lora_alpha=256, lora_dropout=0.05):
         lora_config = LoraConfig(
@@ -174,20 +236,291 @@ class InternVLChatModel(PreTrainedModel):
         self.language_model.enable_input_require_grads()
         self.language_model.print_trainable_parameters()
 
-    def forward_tokenocr(self,
-            pixel_values: torch.FloatTensor)-> Union[Tuple, CausalLMOutputWithPast]:
-        vit_embeds = self.extract_feature_custom(pixel_values) #(vit_batch_size, 16*16, 2048)
-        # vit_embeds = self.extract_feature_custom_no_upsample(pixel_values) #(vit_batch_size, 16*16, 2048)
-        return vit_embeds, None
+    def forward(
+            self,
+            pixel_values: torch.FloatTensor,
+            input_ids: torch.LongTensor = None,
+            attention_mask: Optional[torch.Tensor] = None,
+            position_ids: Optional[torch.LongTensor] = None,
+            image_flags_ori: Optional[torch.LongTensor] = None,
+            image_flags: Optional[torch.LongTensor] = None,
+            mask_values: Optional[torch.LongTensor] = None,
+            masks_flags: Optional[torch.LongTensor] = None,
+            mask_nums: Optional[torch.LongTensor] = None,
+            selected_token_index: Optional[torch.LongTensor] = None,
+            select_token_input_id: Optional[torch.LongTensor] = None,
+            past_key_values: Optional[List[torch.FloatTensor]] = None,
+            labels: Optional[torch.LongTensor] = None,
+            use_cache: Optional[bool] = None,
+            output_attentions: Optional[bool] = None,
+            output_hidden_states: Optional[bool] = None,
+            return_dict: Optional[bool] = None,
+            statistics: Optional[torch.LongTensor] = None,
+            loss_weight: Optional[List] = None,
+            loss_reduction_all_gather: Optional[bool] = False,
+    ) -> Union[Tuple, CausalLMOutputWithPast]:
+        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+        image_flags_ori = image_flags_ori.squeeze(-1)
+        rank = dist.get_rank()
         
+        input_embeds = self.language_model.get_input_embeddings()(input_ids).clone()
 
-    
-    def pixel_unshuffle(self, x, scale_factor=4):
-        h = w = int(x.shape[1] ** 0.5)
-        n, l, c = x.size()
-        x = x.reshape(n, h, w, c)
-        x = x.repeat_interleave(scale_factor, dim=1).repeat_interleave(scale_factor, dim=2)
-        return x
+        if self.cur_stage == 1:
+            outputs = self.forward_stage1(input_ids, input_embeds, pixel_values, image_flags, mask_nums, mask_values, masks_flags, return_dict)
+        
+        elif self.cur_stage >= 2:
+            outputs = self.forward_vqa(input_ids, 
+                                       input_embeds, 
+                                       pixel_values, 
+                                       image_flags, 
+                                       image_flags_ori,
+                                       mask_nums,
+                                       mask_values, 
+                                       masks_flags,
+                                       selected_token_index,
+                                       select_token_input_id,
+                                       statistics, 
+                                       past_key_values,
+                                       labels, 
+                                       attention_mask,
+                                       position_ids,
+                                       use_cache,
+                                       output_attentions,
+                                       output_hidden_states,
+                                       loss_weight,
+                                       loss_reduction_all_gather,
+                                       return_dict)
+
+        return outputs
+
+    def forward_stage1(self, input_ids, input_embeds, pixel_values, image_flags, mask_nums, mask_values, masks_flags, return_dict):
+        vit_embeds = self.extract_feature_custom(pixel_values) #(vit_batch_size, 16*16, 2048)
+
+        loss = self.forward_token_level(input_ids, input_embeds, vit_embeds, image_flags, mask_nums, mask_values, masks_flags, return_dict)
+        
+        if not return_dict:
+
+            return loss
+
+        return CausalLMOutputWithPast(
+            loss=loss,
+            logits=0.,
+            past_key_values=0,
+            hidden_states=0,
+            attentions=0,
+        )
+
+    def forward_vqa(self, 
+                    input_ids, 
+                    input_embeds, 
+                    pixel_values, 
+                    image_flags, 
+                    image_flags_ori,
+                    mask_nums, 
+                    mask_values, 
+                    masks_flags,
+                    selected_token_index,
+                    select_token_input_id,
+                    statistics, 
+                    past_key_values,
+                    labels, 
+                    attention_mask,
+                    position_ids,
+                    use_cache,
+                    output_attentions,
+                    output_hidden_states,
+                    loss_weight,
+                    loss_reduction_all_gather,
+                    return_dict):
+        
+        vit_embeds = self.extract_feature_mt(pixel_values)
+        vit_embeds = vit_embeds[image_flags_ori == 1]
+        vit_batch_size = pixel_values.shape[0]
+
+        B, N, C = input_embeds.shape
+        input_embeds = input_embeds.reshape(B * N, C)
+
+        if torch.distributed.is_initialized() and torch.distributed.get_rank() == 0:
+            print(f'dynamic ViT batch size: {vit_batch_size}, images per sample: {vit_batch_size / B}, dynamic token length: {N}')
+            if statistics is not None:
+                num_samples, num_padding_tokens, num_padding_images = statistics.tolist()
+                self.num_samples += num_samples
+                print(f'total_samples={self.num_samples}, {num_samples=}, {num_padding_tokens=}, {num_padding_images=}')
+
+        input_ids = input_ids.reshape(B * N)
+        selected = (input_ids == self.img_context_token_id)
+
+        try:
+            input_embeds[selected] = input_embeds[selected] * 0.0 + vit_embeds.reshape(-1, C)
+            ignore_flag = False
+        except Exception as e:
+            vit_embeds = vit_embeds.reshape(-1, C)
+            print(f'warning: {e}, input_embeds[selected].shape={input_embeds[selected].shape}, '
+                  f'vit_embeds.shape={vit_embeds.shape}')
+            n_token = selected.sum()
+            input_embeds[selected] = input_embeds[selected] * 0.0 + vit_embeds[:n_token]
+            ignore_flag = True
+
+        input_embeds = input_embeds.reshape(B, N, C)
+
+        outputs = self.language_model(
+            inputs_embeds=input_embeds,
+            attention_mask=attention_mask,
+            position_ids=position_ids,
+            past_key_values=past_key_values,
+            use_cache=use_cache,
+            output_attentions=output_attentions,
+            output_hidden_states=True,
+            return_dict=return_dict,
+        )
+        logits = outputs.logits
+
+        loss = None
+        if labels is not None and loss_weight is not None:
+            loss_weight = torch.tensor(loss_weight, dtype=torch.float32, device=labels.device)
+            # Shift so that tokens < n predict n
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = labels[..., 1:].contiguous()
+            shift_weights = loss_weight[..., 1:].contiguous()
+            # Flatten the tokens
+            loss_fct = CrossEntropyLoss(reduction='none')
+            shift_logits = shift_logits.view(-1, self.language_model.config.vocab_size)
+            shift_labels = shift_labels.view(-1)
+            shift_weights = shift_weights.view(-1)
+            # Enable model parallelism
+            shift_labels = shift_labels.to(shift_logits.device)
+            shift_weights = shift_weights.to(shift_logits.device)
+            loss = loss_fct(shift_logits, shift_labels)
+
+            shift_weights_sum = shift_weights.sum()
+            if loss_reduction_all_gather:
+                dist.all_reduce(shift_weights_sum, op=dist.ReduceOp.AVG)
+
+            loss = loss * shift_weights
+            loss = loss.sum() / shift_weights_sum
+            if ignore_flag:
+                loss = loss * 0.0
+        elif labels is not None:
+            # Shift so that tokens < n predict n
+            shift_logits = logits[..., :-1, :].contiguous()
+            shift_labels = labels[..., 1:].contiguous()
+            # Flatten the tokens
+            loss_fct = CrossEntropyLoss()
+            shift_logits = shift_logits.view(-1, self.language_model.config.vocab_size)
+            shift_labels = shift_labels.view(-1)
+            # Enable model parallelism
+            shift_labels = shift_labels.to(shift_logits.device)
+            loss = loss_fct(shift_logits, shift_labels)
+            if ignore_flag:
+                loss = loss * 0.0
+
+        if not return_dict:
+            output = (logits,) + outputs[1:]
+            return (loss,) + output if loss is not None else output
+
+        if self.token_level and selected_token_index is not None:
+
+            outputs_hs = outputs['hidden_states'][self.select_token_level_layer_idx].reshape(B * N, C)
+            image_llm_hidden_features = outputs_hs[selected].reshape(vit_batch_size, -1, C)
+            
+            selected_token_index = selected_token_index.unsqueeze(-1).expand(-1, -1, outputs['hidden_states'][self.select_token_level_layer_idx].shape[-1]) 
+            text_llm_hidden_features = torch.gather(outputs['hidden_states'][self.select_token_level_layer_idx], 1, selected_token_index)    
+
+            token_level_loss = self.forward_token_level(select_token_input_id, text_llm_hidden_features, image_llm_hidden_features, image_flags, mask_nums, mask_values, masks_flags, return_dict)
+            loss_seg, loss_sim = token_level_loss
+            print('loss_seg:{:} -- loss_sim:{:} -- loss_llm:{:}'.format(loss_seg, loss_sim, loss))
+            loss += (loss_seg + loss_sim) * 0.5
+            
+        return CausalLMOutputWithPast(
+            loss=loss,
+            logits=logits,
+            past_key_values=outputs.past_key_values,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
+
+    def forward_token_level(self, input_ids, input_embeds, vit_embeds, image_flags, mask_nums, mask_values, masks_flags, return_dict):
+        # import pdb; pdb.set_trace()
+        nb, nl, nd = vit_embeds.shape
+        vit_embeds = vit_embeds.reshape(nb, int(nl ** 0.5), int(nl ** 0.5), nd)
+
+        # vit_embeds = vit_embeds.repeat_interleave(8, dim=1).repeat_interleave(8, dim=2)
+        vit_embeds = vit_embeds.permute(0, 3, 1, 2)
+        vit_embeds = self.upsample_token_level(vit_embeds).permute(0, 2, 3, 1)
+        # vit_embeds = vit_embeds.repeat_interleave(2, dim=1).repeat_interleave(2, dim=2)
+        h, w = vit_embeds.shape[1], vit_embeds.shape[2]
+        assert h == w
+        vit_embeds = vit_embeds.split(list(image_flags)) #[(vit_batch_size / B, h, w, C)]*B
+        vit_batch_size = nb
+
+        B, N, C = input_embeds.shape
+        try:
+            assert sum(image_flags) == mask_values.shape[0]
+        except:
+            print((mask_values.shape, image_flags, mask_nums))
+        
+        mask_values = torch.nn.functional.interpolate(mask_values.float(), size=(h, w), mode='bilinear', align_corners=False) #(128, 128)
+        masks = mask_values.split(list(image_flags)) #[(vit_batch_size / B, N, 448, 448)]*B
+
+        loss_seg = 0
+        for i, vit_embed in enumerate(vit_embeds):
+            mask = masks[i][:, input_ids[i] != 2]
+            input_embed = input_embeds[i, :][input_ids[i] != 2]
+            new_vit_embed = vit_embed / vit_embed.norm(dim=-1, keepdim=True)
+            new_input_embed = input_embed / input_embed.norm(dim=-1, keepdim=True)
+            attn = new_vit_embed @ new_input_embed.t()
+            attn = attn.permute(3, 0, 1, 2)
+            loss_seg += F.binary_cross_entropy_with_logits(attn, (mask>0).permute(1,0,2,3).float(), reduction="none").mean()
+        loss_seg = loss_seg / (i+1)
+
+        masks_flags = masks_flags.chunk(B)
+        token_features = []
+        input_embedings = []
+        masked_input_ids = []
+        masked_zero_bools = []
+        for i, vit_embed in enumerate(vit_embeds):
+            current_token = masks_flags[i].sum()
+            mask = masks[i]
+            limit_num = mask.shape[1]
+            mask = mask.permute(1,0,2,3).reshape(limit_num, -1) > 0
+            max_cluster_index = mask.sum(-1)
+            zero_bool = max_cluster_index != 0
+            # import pdb; pdb.set_trace()
+            mask[~zero_bool] = 1 #for addressing bflost16 bug
+            new_max_cluster_index = mask.sum(-1)
+            mask = mask / new_max_cluster_index.unsqueeze(-1)
+            token_feature = torch.matmul(mask.to(vit_embed), vit_embed.reshape(-1, vit_embed.shape[-1]))
+            token_features.extend(token_feature)
+            input_embedings.extend(input_embeds[i, :])
+            masked_input_ids.extend(input_ids[i, zero_bool])
+            masked_zero_bools.append(zero_bool)
+
+        masked_zero_bools = torch.cat(masked_zero_bools)
+        token_features = torch.stack(token_features)
+        input_embedings = torch.stack(input_embedings)
+
+        # import pdb; pdb.set_trace()
+        # loss2 = F.mse_loss(token_features, input_embedings, reduction='none')[masked_zero_bools].sum(1).sqrt().mean()
+        # cosine similarity as logits
+        token_features = token_features / token_features.norm(dim=1, keepdim=True)
+        input_embedings = input_embedings / input_embedings.norm(dim=1, keepdim=True)
+        similarity = F.cosine_similarity(token_features, input_embedings, dim=1)
+        loss_sim = (1 - similarity[masked_zero_bools]).mean()
+        
+        if self.cur_stage == 1:
+            ## siglip
+            masked_input_ids = torch.stack(masked_input_ids)
+            label_matrix = (masked_input_ids.unsqueeze(0) == masked_input_ids.unsqueeze(1)).int()
+            label_matrix = 2 * label_matrix - 1
+            if self.kb:
+                logits = (input_embedings[masked_zero_bools] @ token_features[masked_zero_bools].t()) * self.t_prime.to(input_embedings.device).exp() + self.b.to(input_embedings.device)
+            else:
+                logits = (input_embedings[masked_zero_bools] @ token_features[masked_zero_bools].t()) * self.t_prime.to(input_embedings.device).exp() - 8.9375
+
+            loss_s = -torch.sum(F.logsigmoid(label_matrix * logits)) / logits.shape[0]
+            return loss_seg + loss_sim + loss_s
+        else:
+            return loss_seg, loss_sim
     
     def pixel_shuffle(self, x, scale_factor=0.5):
         n, w, h, c = x.size()
@@ -245,25 +578,24 @@ class InternVLChatModel(PreTrainedModel):
         vit_embeds = self.ocr_mlp(vit_embeds.permute(0, 2, 1))
         return vit_embeds
 
-    def extract_feature_custom_no_upsample(self, pixel_values):
-        if self.select_layer == -1:
-            vit_embeds = self.vision_model(
-                pixel_values=pixel_values,
-                output_hidden_states=False,
-                return_dict=True).last_hidden_state
-        else:
-            vit_embeds = self.vision_model(
-                pixel_values=pixel_values,
-                output_hidden_states=True,
-                return_dict=True).hidden_states[self.select_layer]
-        vit_embeds = vit_embeds[:, 1:, :] # (52, 1025, 1024)
+    def extract_feature_mt(self, pixel_values):
+        
+        vit_embeds = self.vision_model(
+            pixel_values=pixel_values,
+            output_hidden_states=True,
+            return_dict=True)
+        
+        # tokenvl
+        tokenvl_vit_embeds = vit_embeds.hidden_states[-2]
+        tokenvl_vit_embeds = self.encoder_mt(tokenvl_vit_embeds)
+        tokenvl_vit_embeds = self.reducer_mt(tokenvl_vit_embeds)
 
-        h = w = int(vit_embeds.shape[1] ** 0.5)
-        vit_embeds = self.ocr_mlp(vit_embeds)
-        # vit_embeds = self.pixel_unshuffle(vit_embeds)
-        # vit_embeds = vit_embeds.reshape(vit_embeds.shape[0], -1, vit_embeds.shape[-1])
-        return vit_embeds
-    
+        tokenvl_vit_embeds = self.pixel_shuffle(tokenvl_vit_embeds, scale_factor=self.downsample_ratio)
+        tokenvl_vit_embeds = tokenvl_vit_embeds.reshape(tokenvl_vit_embeds.shape[0], -1, tokenvl_vit_embeds.shape[-1])
+        tokenvl_vit_embeds = self.mlp_mt(tokenvl_vit_embeds)
+
+        return tokenvl_vit_embeds 
+
     def batch_chat(self, tokenizer, pixel_values, questions, generation_config, num_patches_list=None,
                    history=None, return_history=False, IMG_START_TOKEN='<img>', IMG_END_TOKEN='</img>',
                    IMG_CONTEXT_TOKEN='<IMG_CONTEXT>', verbose=False, image_counts=None):
@@ -387,7 +719,7 @@ class InternVLChatModel(PreTrainedModel):
             if visual_features is not None:
                 vit_embeds = visual_features
             else:
-                vit_embeds = self.extract_feature(pixel_values)
+                vit_embeds = self.extract_feature_mt(pixel_values)
             input_embeds = self.language_model.get_input_embeddings()(input_ids)
             B, N, C = input_embeds.shape
             input_embeds = input_embeds.reshape(B * N, C)

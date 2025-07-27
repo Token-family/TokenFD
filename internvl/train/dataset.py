@@ -869,7 +869,6 @@ def dynamic_preprocess(image, min_num=1, max_num=6, image_size=448, use_thumbnai
 
 
 def dynamic_preprocess_mask(image, min_num=1, max_num=6, image_size=448, use_thumbnail=False):
-    # import pdb
     length, orig_height, orig_width = image.shape
     aspect_ratio = orig_width / orig_height
 
@@ -882,19 +881,14 @@ def dynamic_preprocess_mask(image, min_num=1, max_num=6, image_size=448, use_thu
     # find the closest aspect ratio to the target
     target_aspect_ratio = find_closest_aspect_ratio(
         aspect_ratio, target_ratios, orig_width, orig_height, image_size)
-    # print(target_aspect_ratio)
     # calculate the target width and height
     target_width = image_size * target_aspect_ratio[0]
     target_height = image_size * target_aspect_ratio[1]
     blocks = target_aspect_ratio[0] * target_aspect_ratio[1]
 
-    # resize the image
-
     tensor_images = image.unsqueeze(1) # 添加一个维度作为单通道
-    # pdb.set_trace()
     resized_images = F.interpolate(tensor_images, size=(target_height, target_width), mode='bilinear', align_corners=False) #(1792,1344)
     resized_images = resized_images > 0
-    # print(resized_images.shape)
     # 然后像 PIL 那样裁剪图像块
     processed_images = []
     for i in range(blocks):
@@ -905,9 +899,7 @@ def dynamic_preprocess_mask(image, min_num=1, max_num=6, image_size=448, use_thu
         # 使用 tensor 切片进行裁剪
         split_img = resized_images[..., top:bottom, left:right]  # 这里使用...来保持通道这一维度
         processed_images.append(split_img)
-        # plt.imshow(split_img.sum(0).squeeze())
-        # plt.savefig(f'/workdir/guantongkun/12490719/eef5a3b245897c9f4335463fb12fed35/work_dirs/{i}_mask.jpg', dpi=600)
-    # pdb.set_trace()     
+          
     # 最后，如果您需要，可以对处理过的图像list进行任何后续操作
     # 例如，convert回通道为最后维度的形式，如果是单通道的话
     processed_images = [img.squeeze(1) for img in processed_images]
