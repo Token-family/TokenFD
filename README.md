@@ -307,8 +307,8 @@ remaining weights from the LLM-guided Token Alignment and unfreeze all parameter
 ## 🤚 Release Plans
 
 ✅ Inference code and weights for TokenFD
+✅  Code & model checkpoint for TokenVL
 - [x] Release Character-level Text Image Foundation Model (CharOCR)
-- [x] Code & model checkpoint for TokenVL
 - [x] Data for the Pre-training and Fine-tuning of TokenVL
 - [x] TokenIT data and script
 
