@@ -19,6 +19,7 @@
 - [Quick Start](#-Quick-start)
 - [Streamlit Demo](#-streamlit-demo)
 - [BPE Token Visualization](#-bpe-token-visualization)
+- [Weights](#-weights)
 - [Token Family](#-Token-family)
 - [Release Plans](#-Release-Plans)
 
@@ -168,6 +169,19 @@ We welcome any feedback or suggestions to improve the demo. Please feel free to 
 [Chart|Table|GUI](https://drive.google.com/file/d/11tA1h35PsZV5rYPMyVvXbqMkWv7yYI8c/view?usp=sharing)
 
 [Chinese|Punctuation](https://drive.google.com/file/d/1-FO6IWVP9zritGd0ufRlzPJbFH9WMoT8/view?usp=sharing)
+
+## 🤗 Weights
+
+我们在当前开源的基座模型上进行了定制适配，模型地址：
+
+[TokenFD-ResNet50-bilingual](https://huggingface.co/TongkunGuan/R50)
+
+[TokenFD-InternViT2.5-bilingual](https://huggingface.co/TongkunGuan/TokenFD_2048_Bilingual_seg)
+
+[TokenFD-InternViT2.5-english](https://huggingface.co/TongkunGuan/TokenFD_4096_English_seg)
+
+[TokenFD-QwenViT2.5-bilingual](https://huggingface.co/TongkunGuan/TokenFD_no_dis)
+
 
 ## 🏠 Token Family
 
